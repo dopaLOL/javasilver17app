@@ -1,54 +1,57 @@
 import java.util.Properties
 import java.io.FileInputStream
-plugins {
 
+plugins {
     alias(libs.plugins.android.application)
 }
 
+android {
+    namespace = "com.example.java"
+    compileSdk = 35
 
+    defaultConfig {
+        applicationId = "com.example.java"
+        minSdk = 24
+        targetSdk = 34
+        versionCode = 1
+        versionName = "1.0"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        android {
-            namespace = "com.example.java"
-            compileSdk = 35
-
-            defaultConfig {
-                applicationId = "com.example.java"
-                minSdk = 24
-                targetSdk = 34
-                versionCode = 1
-                versionName = "1.0"
-                testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
-                // local.properties を読み込む
-                val localProperties = Properties()
-                val localPropertiesFile = rootProject.file("local.properties")
-                if (localPropertiesFile.exists()) {
-                    FileInputStream(localPropertiesFile).use { inputStream ->
-                        localProperties.load(inputStream)
-                    }
-                }
-
-                // APIキーを BuildConfig に追加（defaultConfig 内）
-                buildConfigField("String", "CONTENTFUL_SPACE_ID", "\"${localProperties.getProperty("CONTENTFUL_SPACE_ID", "")}\"")
-                buildConfigField("String", "CONTENTFUL_ACCESS_TOKEN", "\"${localProperties.getProperty("CONTENTFUL_ACCESS_TOKEN", "")}\"")
-            }
-
-            // `buildTypes` ブロックは `defaultConfig` の外に記述する
-            buildTypes {
-                release {
-                    isMinifyEnabled = false
-                    proguardFiles(
-                        getDefaultProguardFile("proguard-android-optimize.txt"),
-                        "proguard-rules.pro"
-                    )
-                }
-            }
-
-            compileOptions {
-                sourceCompatibility = JavaVersion.VERSION_11
-                targetCompatibility = JavaVersion.VERSION_11
+        // local.properties を読み込む
+        // local.properties ファイルからプロパティを読み込む
+        val localProperties = Properties()
+        val localPropertiesFile = rootProject.file("local.properties")
+        if (localPropertiesFile.exists()) {
+            localPropertiesFile.inputStream().use { stream ->
+                localProperties.load(stream)
             }
         }
+
+        // APIキーを BuildConfig に追加（defaultConfig 内）
+        buildConfigField("String", "CONTENTFUL_API_KEY", "\"${localProperties.getProperty("CONTENTFUL_API_KEY")}\"")
+        buildConfigField("String", "CONTENTFUL_SPACE_ID", "\"${localProperties.getProperty("CONTENTFUL_SPACE_ID")}\"")
+    }
+
+    buildFeatures {
+        buildConfig = true
+    }
+
+    // `buildTypes` ブロックは `defaultConfig` の外に記述する
+    buildTypes {
+        release {
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
+}
 
 dependencies {
     implementation(libs.appcompat)

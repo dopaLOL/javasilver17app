@@ -5,6 +5,7 @@ import java.util.List;
 public class AppDataHolder {
     private static List<QuestionData> questionList;
 
+
     public static List<QuestionData> getQuestionList() {
         return questionList;
     }
